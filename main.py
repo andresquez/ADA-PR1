@@ -3,79 +3,76 @@
 # Proyecto 1
 # Grupo A1
 
-# librerias
-import itertools
+# Librerías
 import time
 import json
+import itertools
 
-# importar archivos de cadena y configuración
-cadena = 'cadena.txt'
-config_file = 'config.json'
+# Archivos de entrada
+cadena_entrada = 'cadena.txt'
+configuracion_archivo = 'config.json'
 
-initial_pos = 1
+posicion_inicial = 1
 
-class Turing:
-    def __init__(self, tape, turing_table, initial_pos=1) -> None:
-        self.tape = tape
-        self.pos = initial_pos
-        self.turing_table = turing_table
-        self.value = self.tape[self.pos]
-        self.state = "0"
+class MaquinaTuring:
+    def __init__(self, cinta, tabla_turing, posicion_inicial=1) -> None:
+        self.cinta = cinta
+        self.posicion = posicion_inicial
+        self.tabla_turing = tabla_turing
+        self.valor = self.cinta[self.posicion]
+        self.estado = "0"
 
-    def move(self) -> None:
-        self.value = self.tape[self.pos]
+    def mover(self) -> None:
+        self.valor = self.cinta[self.posicion]
 
-        new = self.turing_table[self.state][self.value]
+        nueva = self.tabla_turing[self.estado][self.valor]
 
-        self.state = new[0]
-        self.tape[self.pos] = new[1]
-        self.pos += new[2]
+        self.estado = nueva[0]
+        self.cinta[self.posicion] = nueva[1]
+        self.posicion += nueva[2]
 
-        # Se imprime el movimiento de la máquina
-        # Dependiendo el número de espacios en la máquina se cambian por _
-        tape_str = ''.join(self.tape).replace("X", "□")
-        # Muestra en dónde se encuentra la cabeza
-        head_str = ''.join([' ']*(self.pos+1)) + '\u2193'
-        if self.pos < len(tape_str):
-            prueba = tape_str[:self.pos]+"["+tape_str[self.pos]+"]" + tape_str[self.pos +1:]
+        cinta_str = ''.join(self.cinta).replace("X", "□")
+        cabeza_str = ''.join([' ']*(self.posicion+1)) + '\u2193'
+        if self.posicion < len(cinta_str):
+            visualizacion_cinta = cinta_str[:self.posicion]+"["+cinta_str[self.posicion]+"]" + cinta_str[self.posicion +1:]
         else:
-            prueba = tape_str[:self.pos]+"[ ]" + tape_str[self.pos:]
-        print(head_str)
-        print(prueba)
-        print(f"State: {self.state}")
+            visualizacion_cinta = cinta_str[:self.posicion]+"[ ]" + cinta_str[self.posicion:]
+        print(cabeza_str)
+        print(visualizacion_cinta)
+        print(f"Estado: {self.estado}")
         print()
 
-    def run(self) -> (str, float):
-        start_time = time.time()
-        while self.state != "18":
-            self.move()
-        elapsed_time = time.time() - start_time
-        print("Tiempo tomado: %s segundos" % elapsed_time)
-        return ("".join(self.tape).replace("X", "") + " = " + str(self.tape.count("1")), elapsed_time)
+    def ejecutar(self) -> (str, float):
+        tiempo_inicio = time.time()
+        while self.estado != "18":
+            self.mover()
+        tiempo_transcurrido = time.time() - tiempo_inicio
+        print("Tiempo transcurrido: %s segundos" % tiempo_transcurrido)
+        return ("".join(self.cinta).replace("X", "") + " = " + str(self.cinta.count("1")), tiempo_transcurrido)
 
-def multiple(file_name, config_file):
-    f = open(config_file)
-    data = json.load(f)
-    turing_table = data["transitions"]
-    line_list = []
-    output_list = []
+def read_multiple_lines(nombre_archivo, archivo_configuracion):
+    archivo = open(archivo_configuracion)
+    datos = json.load(archivo)
+    tabla_turing = datos["transitions"]
+    lista_lineas = []
+    lista_resultados = []
 
-    with open(file_name, 'r') as archivo:
-        for line in archivo:
-            line_list.append(line.strip())
+    with open(nombre_archivo, 'r') as archivo_entrada:
+        for linea in archivo_entrada:
+            lista_lineas.append(linea.strip())
 
-    if len(line_list) == 1:
-        taper = ["X"] + list(itertools.chain(*line_list[0])) + ["X"]
-        result, elapsed_time = Turing(taper, turing_table).run()
-        output_list.append(result + ' - Tiempo: ' + str(elapsed_time) + ' segundos\n')
+    if len(lista_lineas) == 1:
+        cinta = ["X"] + list(itertools.chain(*lista_lineas[0])) + ["X"]
+        resultado, tiempo_transcurrido = MaquinaTuring(cinta, tabla_turing).ejecutar()
+        lista_resultados.append(resultado + ' - Tiempo: ' + str(tiempo_transcurrido) + ' segundos\n')
     else:
-        for i in line_list:
-            taper = ["X"] + list(itertools.chain(*i)) + ["X"] * 50 * ((len(line_list)) * 2 - 2)
-            result, elapsed_time = Turing(taper, turing_table).run()
-            output_list.append(result + ' - Tiempo: ' + str(elapsed_time) + ' segundos\n')
+        for i in lista_lineas:
+            cinta = ["X"] + list(itertools.chain(*i)) + ["X"] * 50 * ((len(lista_lineas)) * 2 - 2)
+            resultado, tiempo_transcurrido = MaquinaTuring(cinta, tabla_turing).ejecutar()
+            lista_resultados.append(resultado + ' - Tiempo: ' + str(tiempo_transcurrido) + ' segundos\n')
 
-    with open('result.txt', 'a') as file:
-        file.truncate(0)
-        file.writelines(output_list)
+    with open('resultado.txt', 'a') as archivo_salida:
+        archivo_salida.truncate(0)
+        archivo_salida.writelines(lista_resultados)
 
-multiple(cadena, config_file)
+read_multiple_lines(cadena_entrada, configuracion_archivo)
