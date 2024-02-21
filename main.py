@@ -9,7 +9,7 @@ import time
 import json
 
 # importar archivos de cadena y configuración
-filee = 'cadena.txt'
+cadena = 'cadena.txt'
 config_file = 'config.json'
 
 initial_pos = 1
@@ -78,4 +78,4 @@ def multiple(file_name, config_file):
         file.truncate(0)
         file.writelines(output_list)
 
-multiple(filee, config_file)
+multiple(cadena, config_file)
