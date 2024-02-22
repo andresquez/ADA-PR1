@@ -31,7 +31,7 @@ class MaquinaTuring:
         self.cinta[self.posicion] = nueva[1]
         self.posicion += nueva[2]
 
-        cinta_str = ''.join(self.cinta).replace("X", "□")
+        cinta_str = ''.join(self.cinta).replace("X", "#")
         cabeza_str = ''.join([' ']*(self.posicion+1)) + '\u2193'
         if self.posicion < len(cinta_str):
             visualizacion_cinta = cinta_str[:self.posicion]+"["+cinta_str[self.posicion]+"]" + cinta_str[self.posicion +1:]
